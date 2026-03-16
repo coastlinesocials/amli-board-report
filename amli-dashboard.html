@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>American Lithium Corp. — Executive Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0a0f1a;
+  --ink-mid: #111827;
+  --ink-light: #1e2d3d;
+  --ink-card: #162030;
+  --stone: #7a8fa8;
+  --stone-light: #b0c0d0;
+  --stone-pale: #e8edf3;
+  --white: #ffffff;
+  --page: #0d1520;
+  --li: #00b4d8;
+  --li-dim: rgba(0,180,216,0.12);
+  --li-border: rgba(0,180,216,0.22);
+  --ur: #f4a261;
+  --ur-dim: rgba(244,162,97,0.12);
+  --ur-border: rgba(244,162,97,0.22);
+  --tlc: #52b788;
+  --tlc-dim: rgba(82,183,136,0.12);
+  --tlc-border: rgba(82,183,136,0.22);
+  --gold: #e9c46a;
+  --pos: #2d9e6b;
+  --pos-dim: rgba(45,158,107,0.15);
+  --neg: #c1121f;
+  --neg-dim: rgba(193,18,31,0.15);
+  --border: rgba(255,255,255,0.07);
+  --border-med: rgba(255,255,255,0.12);
+  --text: #c8d8e8;
+  --text-bright: #e8f0f8;
+  --muted: #5a7088;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'IBM Plex Sans', sans-serif; background: var(--page); color: var(--text); min-height: 100vh; }
+
+/* ── TOP NAV ── */
+.top-nav {
+  background: var(--ink);
+  border-bottom: 1px solid var(--border);
+  padding: 0 52px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nav-logo {
+  width: 34px; height: 34px;
+  background: var(--li-dim);
+  border: 1px solid var(--li-border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  color: var(--li);
+}
+.nav-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--text-bright);
+}
+.nav-name span { color: var(--li); }
+.nav-exchanges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.exchange-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--stone);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-med);
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.nav-links { display: flex; gap: 6px; }
+.nav-link {
+  font-size: 12px;
+  color: var(--stone);
+  padding: 5px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.nav-link:hover { color: var(--text-bright); border-color: var(--border-med); }
+.nav-link.active { color: var(--li); background: var(--li-dim); border-color: var(--li-border); }
+.nav-date {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+/* ── HERO BAND ── */
+.hero-band {
+  background: var(--ink);
+  border-bottom: 1px solid var(--border);
+  padding: 36px 52px 32px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-band::before {
+  content: '';
+  position: absolute;
+  right: -100px; top: -100px;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,180,216,0.05);
+}
+.hero-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; align-items: center; position: relative; z-index: 1; }
+.hero-title-block {}
+.hero-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--li); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+.hero-title { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--text-bright); line-height: 1.1; margin-bottom: 6px; }
+.hero-sub { font-size: 12px; color: var(--stone); font-weight: 300; }
+
+/* ── HERO KPI CARDS ── */
+.hero-kpi {
+  background: var(--ink-card);
+  border: 1px solid var(--border-med);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+.hero-kpi-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.hero-kpi-main { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.hero-kpi-val { font-family: 'Playfair Display', serif; font-size: 30px; color: var(--text-bright); line-height: 1; }
+.hero-kpi-change { font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 2px 8px; border-radius: 3px; }
+.up { background: var(--pos-dim); color: #5cd69a; }
+.down { background: var(--neg-dim); color: #f08080; }
+.hero-kpi-sub { font-size: 11px; color: var(--muted); }
+
+/* ── MARKET CONTEXT GRID ── */
+.market-grid-section { background: var(--ink); border-bottom: 1px solid var(--border); padding: 24px 52px; }
+.market-grid-inner { max-width: 1200px; margin: 0 auto; }
+.market-grid-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--li); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 14px; }
+.market-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.market-stat-card { background: var(--ink-card); border: 1px solid var(--border-med); border-radius: 10px; padding: 14px 16px; }
+.market-stat-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; line-height: 1.3; }
+.market-stat-val { font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: var(--text-bright); font-weight: 500; margin-bottom: 6px; line-height: 1.2; }
+.market-stat-chip { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; display: inline-block; }
+
+/* ── MAIN GRID ── */
+.dash-body { max-width: 1200px; margin: 0 auto; padding: 36px 52px 80px; }
+
+/* ── SECTION HEADERS ── */
+.dash-section { margin-bottom: 36px; }
+.dash-section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.dash-section-tag { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 2.5px; text-transform: uppercase; }
+.dash-section-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ── STOCK + TREASURY GRID ── */
+.stock-treasury-grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+
+/* ── STOCK TABLE ── */
+.stock-panel { background: var(--ink-card); border: 1px solid var(--border-med); border-radius: 14px; overflow: hidden; }
+.panel-header { padding: 16px 22px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: baseline; }
+.panel-title { font-size: 13px; font-weight: 500; color: var(--text-bright); }
+.panel-sub { font-size: 11px; color: var(--muted); }
+.stock-table { width: 100%; border-collapse: collapse; }
+.stock-table thead tr { background: rgba(255,255,255,0.03); }
+.stock-table thead th { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; padding: 10px 18px; text-align: left; white-space: nowrap; }
+.stock-table thead th:not(:first-child) { text-align: right; }
+.stock-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+.stock-table tbody tr:last-child { border-bottom: none; }
+.stock-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+.stock-table tbody tr.latest { background: var(--li-dim); }
+.stock-table tbody td { padding: 12px 18px; font-size: 13px; color: var(--text); }
+.stock-table tbody td:not(:first-child) { font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-align: right; }
+.stock-table .month-label { font-weight: 500; color: var(--text-bright); }
+.change-pill { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; display: inline-block; }
+
+/* ── TREASURY PANEL ── */
+.treasury-panel { background: var(--ink-card); border: 1px solid var(--border-med); border-radius: 14px; overflow: hidden; }
+.treasury-total-block { background: var(--ink); padding: 20px 22px; border-bottom: 1px solid var(--border); }
+.treasury-total-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.treasury-total-val { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--text-bright); margin-bottom: 4px; }
+.treasury-total-sub { font-size: 11px; color: var(--muted); }
+.treasury-sparkline { padding: 14px 22px 0; }
+.treasury-spark-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+.treasury-entities { padding: 14px 22px 20px; display: flex; flex-direction: column; gap: 10px; }
+.treasury-entity-row { display: flex; justify-content: space-between; align-items: center; }
+.treasury-entity-left { display: flex; align-items: center; gap: 8px; }
+.entity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.treasury-entity-name { font-size: 12px; color: var(--stone-light); }
+.treasury-entity-val { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-bright); }
+.treasury-entity-bar-wrap { padding: 0 22px 16px; }
+.entity-bar-row { margin-bottom: 8px; }
+.entity-bar-header { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.entity-bar-name { font-size: 11px; color: var(--stone); }
+.entity-bar-val { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); }
+.entity-bar-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.entity-bar-fill { height: 100%; border-radius: 2px; }
+
+/* ── PROJECT TIMELINES ── */
+.projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.project-panel { background: var(--ink-card); border: 1px solid var(--border-med); border-radius: 14px; overflow: hidden; }
+.project-panel-header { padding: 16px 20px 14px; position: relative; }
+.project-panel-header.li { border-bottom: 2px solid var(--li); background: linear-gradient(135deg, rgba(0,180,216,0.08) 0%, transparent 60%); }
+.project-panel-header.ur { border-bottom: 2px solid var(--ur); background: linear-gradient(135deg, rgba(244,162,97,0.08) 0%, transparent 60%); }
+.project-panel-header.tlc { border-bottom: 2px solid var(--tlc); background: linear-gradient(135deg, rgba(82,183,136,0.08) 0%, transparent 60%); }
+.project-name { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--text-bright); margin-bottom: 3px; }
+.project-location { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.project-status-pill { font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; display: inline-block; }
+.pill-active { background: var(--pos-dim); color: #5cd69a; }
+.pill-advancing { background: var(--li-dim); color: var(--li); }
+.pill-hold { background: rgba(255,255,255,0.05); color: var(--stone); }
+.project-panel-body { padding: 16px 20px 20px; }
+
+/* ── PROJECT MILESTONE TIMELINE ── */
+.milestone-section-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.milestones { display: flex; flex-direction: column; gap: 0; }
+.milestone-item { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; position: relative; }
+.milestone-item:not(:last-child)::after { content: ''; position: absolute; left: 11px; top: 28px; bottom: -8px; width: 1px; background: var(--border); }
+.milestone-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0; margin-top: 1px; }
+.m-done { background: rgba(45,158,107,0.2); border: 1px solid rgba(45,158,107,0.4); color: #5cd69a; }
+.m-done.li { background: var(--li-dim); border: 1px solid var(--li-border); color: var(--li); }
+.m-done.ur { background: var(--ur-dim); border: 1px solid var(--ur-border); color: var(--ur); }
+.m-done.tlc { background: var(--tlc-dim); border: 1px solid var(--tlc-border); color: var(--tlc); }
+.m-current { background: var(--ink); border: 2px solid var(--li); color: var(--li); }
+.m-current.ur { border-color: var(--ur); color: var(--ur); }
+.m-current.tlc { border-color: var(--tlc); color: var(--tlc); }
+.m-upcoming { background: rgba(255,255,255,0.03); border: 1px solid var(--border-med); color: var(--muted); }
+.milestone-content {}
+.milestone-date { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); margin-bottom: 2px; }
+.milestone-text { font-size: 12px; color: var(--text); line-height: 1.4; font-weight: 300; }
+.milestone-text.done { color: var(--stone-light); }
+.milestone-text.current { color: var(--text-bright); font-weight: 500; }
+.milestone-text.upcoming { color: var(--muted); }
+.milestone-divider { height: 1px; background: var(--border); margin: 8px 0; }
+
+/* ── LI MARKET CHART ── */
+.market-chart-panel { background: var(--ink-card); border: 1px solid var(--border-med); border-radius: 14px; overflow: hidden; }
+.market-chart-body { padding: 20px 24px 16px; }
+
+/* ── NEWS TIMELINE ── */
+.news-timeline-panel { background: var(--ink-card); border: 1px solid var(--border-med); border-radius: 14px; overflow: hidden; }
+.news-timeline-body { padding: 16px 22px 20px; }
+.news-items { display: flex; flex-direction: column; gap: 0; }
+.news-item { display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.news-item:last-child { border-bottom: none; }
+.news-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.news-dot.published { background: var(--li); }
+.news-dot.planned { background: var(--gold); }
+.news-content {}
+.news-date { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+.news-title { font-size: 12.5px; color: var(--text); font-weight: 300; line-height: 1.4; }
+.news-title.planned { color: var(--muted); font-style: italic; }
+.news-tag { font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 1px 6px; border-radius: 3px; display: inline-block; margin-top: 4px; }
+.news-tag.published { background: var(--li-dim); color: var(--li); }
+.news-tag.planned { background: rgba(233,196,106,0.12); color: var(--gold); }
+
+/* ── REPORT ARCHIVE ── */
+.archive-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.archive-card { background: var(--ink-card); border: 1px solid var(--border-med); border-radius: 12px; padding: 18px 20px; text-decoration: none; display: block; transition: border-color 0.15s, transform 0.15s; }
+.archive-card:hover { border-color: rgba(0,180,216,0.3); transform: translateY(-2px); }
+.archive-card.placeholder { border-style: dashed; opacity: 0.5; cursor: default; }
+.archive-card.placeholder:hover { transform: none; border-color: var(--border-med); }
+.archive-month { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--text-bright); margin-bottom: 4px; }
+.archive-date { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+.archive-pills { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 12px; }
+.a-pill { font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 8px; border-radius: 3px; }
+.a-pill-li { background: var(--li-dim); color: var(--li); }
+.a-pill-ur { background: var(--ur-dim); color: var(--ur); }
+.a-pill-fin { background: rgba(255,255,255,0.05); color: var(--stone); }
+.archive-highlight { font-size: 11.5px; color: var(--muted); line-height: 1.5; padding-top: 10px; border-top: 1px solid var(--border); }
+.archive-highlight strong { color: var(--stone-light); font-weight: 500; }
+.archive-arrow { float: right; font-size: 13px; color: var(--muted); margin-top: -16px; }
+.placeholder-month { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--muted); margin-bottom: 6px; }
+.placeholder-text { font-size: 11px; color: var(--muted); }
+
+/* ── FOOTER ── */
+.dash-footer { background: var(--ink); border-top: 1px solid var(--border); padding: 22px 52px; display: flex; justify-content: space-between; align-items: center; }
+.footer-left { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--muted); }
+.footer-left span { color: var(--li); }
+.footer-right { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+
+@media (max-width: 1024px) {
+  .top-nav { padding: 0 24px; }
+  .hero-band { padding: 28px 24px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 16px; }
+  .market-bar { padding: 12px 24px; }
+  .dash-body { padding: 28px 24px 60px; }
+  .stock-treasury-grid { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .archive-grid { grid-template-columns: 1fr 1fr; }
+  .dash-footer { flex-direction: column; gap: 8px; padding: 16px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <div class="nav-brand">
+    <div class="nav-logo">AL</div>
+    <div class="nav-name">American <span>Lithium</span> Corp.</div>
+  </div>
+  <div class="nav-exchanges">
+    <span class="exchange-pill">TSX-V: LI</span>
+    <span class="exchange-pill">OTCQX: AMLIF</span>
+    <span class="exchange-pill">Frankfurt: 5LA1</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a class="nav-link active" href="#">Dashboard</a>
+      <a class="nav-link" href="#projects">Projects</a>
+      <a class="nav-link" href="#archive">Reports</a>
+    </div>
+    <div class="nav-date">Updated Feb 9, 2026</div>
+  </div>
+</nav>
+
+<!-- HERO BAND -->
+<div class="hero-band">
+  <div class="hero-inner">
+    <div class="hero-title-block">
+      <div class="hero-eyebrow">Executive Dashboard</div>
+      <div class="hero-title">American Lithium<br>Corp. Overview</div>
+      <div class="hero-sub">Senior Management &amp; Board &nbsp;·&nbsp; Confidential</div>
+    </div>
+    <div class="hero-kpi">
+      <div class="hero-kpi-label">Share Price — Latest Close</div>
+      <div class="hero-kpi-main">
+        <div class="hero-kpi-val">$0.85</div>
+        <span class="hero-kpi-change up">+30.8%</span>
+      </div>
+      <div class="hero-kpi-sub">January 31, 2026 &nbsp;·&nbsp; vs $0.65 in December</div>
+    </div>
+    <div class="hero-kpi">
+      <div class="hero-kpi-label">Consolidated Treasury</div>
+      <div class="hero-kpi-main">
+        <div class="hero-kpi-val">$8.40M</div>
+        <span class="hero-kpi-change up">+93% vs Nov</span>
+      </div>
+      <div class="hero-kpi-sub">CAD &nbsp;·&nbsp; As at January 31, 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- MARKET CONTEXT GRID -->
+<div class="market-grid-section">
+  <div class="market-grid-inner">
+    <div class="market-grid-eyebrow">Lithium Market Context</div>
+    <div class="market-grid">
+      <div class="market-stat-card">
+        <div class="market-stat-label">Li Carbonate — Jan 2026 close</div>
+        <div class="market-stat-val">~153,500 CNY/t</div>
+        <span class="market-stat-chip up">+73% vs November</span>
+      </div>
+      <div class="market-stat-card">
+        <div class="market-stat-label">USD equivalent per tonne</div>
+        <div class="market-stat-val">~US $22,175/t</div>
+        <span class="market-stat-chip up">Above $20K threshold</span>
+      </div>
+      <div class="market-stat-card">
+        <div class="market-stat-label">Ganfeng CEO 2026 price target</div>
+        <div class="market-stat-val">~US $30,000/t</div>
+        <span class="market-stat-chip up">Constructive outlook</span>
+      </div>
+      <div class="market-stat-card">
+        <div class="market-stat-label">US critical minerals policy</div>
+        <div class="market-stat-val">Price floor signal</div>
+        <span class="market-stat-chip up">Structural tailwind</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dash-body">
+
+  <!-- STOCK PERFORMANCE + TREASURY -->
+  <div class="dash-section">
+    <div class="dash-section-header">
+      <span class="dash-section-tag">Stock Performance &amp; Treasury</span>
+      <div class="dash-section-line"></div>
+    </div>
+    <div class="stock-treasury-grid">
+
+      <div class="stock-panel">
+        <div class="panel-header">
+          <span class="panel-title">Monthly Stock Performance</span>
+          <span class="panel-sub">TSX-V: LI &nbsp;·&nbsp; CAD share price</span>
+        </div>
+        <table class="stock-table">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Close</th>
+              <th>vs Prior</th>
+              <th>Volume</th>
+              <th>$ Volume</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="month-label">Sep 2025</td>
+              <td>$0.70</td>
+              <td>—</td>
+              <td>21,580,843</td>
+              <td>$12.6M</td>
+            </tr>
+            <tr>
+              <td class="month-label">Oct 2025</td>
+              <td>$0.83</td>
+              <td><span class="change-pill up">+18.5%</span></td>
+              <td>40,708,741</td>
+              <td>$37.7M</td>
+            </tr>
+            <tr>
+              <td class="month-label">Nov 2025</td>
+              <td>$0.66</td>
+              <td><span class="change-pill down">-20.5%</span></td>
+              <td>19,250,524</td>
+              <td>$12.7M</td>
+            </tr>
+            <tr>
+              <td class="month-label">Dec 2025</td>
+              <td>$0.65</td>
+              <td><span class="change-pill down">-1.5%</span></td>
+              <td>16,086,295</td>
+              <td>$10.3M</td>
+            </tr>
+            <tr class="latest">
+              <td class="month-label" style="color:var(--li);">Jan 2026</td>
+              <td style="color:var(--li);">$0.85</td>
+              <td><span class="change-pill up">+30.8%</span></td>
+              <td>28,471,806</td>
+              <td>$24.1M</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="treasury-panel">
+        <div class="treasury-total-block">
+          <div class="treasury-total-label">Consolidated Cash — Jan 2026</div>
+          <div class="treasury-total-val">CAD $8,400,655</div>
+          <div class="treasury-total-sub">All entities combined &nbsp;·&nbsp; Includes $5.65M Surge sale proceeds</div>
+        </div>
+        <div class="treasury-sparkline">
+          <div class="treasury-spark-label">Cash trend — CAD</div>
+          <svg viewBox="0 0 320 60" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;margin-bottom:4px;">
+            <defs>
+              <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00b4d8" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#00b4d8" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M20,38 L80,32 L140,30 L200,36 L280,8" fill="none" stroke="var(--li)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20,38 L80,32 L140,30 L200,36 L280,8 L280,55 L20,55 Z" fill="url(#sparkGrad)"/>
+            <circle cx="280" cy="8" r="4" fill="var(--li)"/>
+            <text x="20" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">Sep</text>
+            <text x="75" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">Oct</text>
+            <text x="132" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">Nov</text>
+            <text x="192" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">Dec</text>
+            <text x="266" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--li)">Jan</text>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);padding:0 0 4px;">
+            <span>~$4.0M</span><span>~$4.3M</span><span>~$4.3M</span><span>~$3.8M</span><span style="color:var(--li)">$8.4M</span>
+          </div>
+        </div>
+        <div class="treasury-entity-bar-wrap">
+          <div class="entity-bar-row">
+            <div class="entity-bar-header"><span class="entity-bar-name">ALC Parent</span><span class="entity-bar-val">$7,999,775</span></div>
+            <div class="entity-bar-track"><div class="entity-bar-fill" style="width:95.2%;background:var(--li);"></div></div>
+          </div>
+          <div class="entity-bar-row">
+            <div class="entity-bar-header"><span class="entity-bar-name">Macusani Uranium</span><span class="entity-bar-val">$385,008</span></div>
+            <div class="entity-bar-track"><div class="entity-bar-fill" style="width:4.6%;background:var(--ur);"></div></div>
+          </div>
+          <div class="entity-bar-row">
+            <div class="entity-bar-header"><span class="entity-bar-name">TLC Nevada</span><span class="entity-bar-val">$15,872</span></div>
+            <div class="entity-bar-track"><div class="entity-bar-fill" style="width:0.2%;background:var(--tlc);"></div></div>
+          </div>
+          <div class="entity-bar-row">
+            <div class="entity-bar-header"><span class="entity-bar-name">Macusani Yellowcake</span><span class="entity-bar-val">$0.31</span></div>
+            <div class="entity-bar-track"><div class="entity-bar-fill" style="width:0%;background:var(--gold);"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LI MARKET CHART + NEWS -->
+  <div class="dash-section">
+    <div class="dash-section-header">
+      <span class="dash-section-tag">Market Context &amp; News Flow</span>
+      <div class="dash-section-line"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+      <div class="market-chart-panel">
+        <div class="panel-header">
+          <span class="panel-title">Li Carbonate Price Recovery</span>
+          <span class="panel-sub">CNY / tonne &nbsp;·&nbsp; Aug 2025 → Jan 2026</span>
+        </div>
+        <div class="market-chart-body">
+          <svg viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+            <defs>
+              <linearGradient id="liGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00b4d8" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#00b4d8" stop-opacity="0.01"/>
+              </linearGradient>
+              <linearGradient id="projGrad2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00b4d8" stop-opacity="0.07"/>
+                <stop offset="100%" stop-color="#00b4d8" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="40" y1="20" x2="380" y2="20" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <line x1="40" y1="55" x2="380" y2="55" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <line x1="40" y1="90" x2="380" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <line x1="40" y1="125" x2="380" y2="125" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <!-- Y axis labels -->
+            <text x="0" y="23" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">200K</text>
+            <text x="0" y="58" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">150K</text>
+            <text x="0" y="93" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">100K</text>
+            <text x="6" y="128" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">50K</text>
+            <!-- $20K threshold reference (at ~100K CNY equivalent line) -->
+            <line x1="40" y1="90" x2="290" y2="90" stroke="rgba(82,183,136,0.4)" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="292" y="93" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--tlc)">$20K USD</text>
+            <!-- $30K target -->
+            <line x1="40" y1="55" x2="380" y2="55" stroke="rgba(0,180,216,0.2)" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="318" y="51" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(0,180,216,0.5)">$30K target</text>
+            <!-- Area fill -->
+            <path d="M60,122 C90,115 120,108 155,100 C185,93 215,80 250,63 L250,135 L60,135 Z" fill="url(#liGrad)"/>
+            <!-- Projected area -->
+            <path d="M250,63 C275,52 300,42 340,30 L340,135 L250,135 Z" fill="url(#projGrad2)"/>
+            <!-- Price line -->
+            <path d="M60,122 C90,115 120,108 155,100 C185,93 215,80 250,63" fill="none" stroke="var(--li)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Projected continuation -->
+            <path d="M250,63 C275,52 300,42 340,30" fill="none" stroke="var(--li)" stroke-width="1.5" stroke-dasharray="4 3" stroke-linecap="round" opacity="0.4"/>
+            <!-- Data points -->
+            <circle cx="60" cy="122" r="3.5" fill="var(--ink-mid)" stroke="var(--li)" stroke-width="1.5"/>
+            <circle cx="105" cy="115" r="3.5" fill="var(--ink-mid)" stroke="var(--li)" stroke-width="1.5"/>
+            <circle cx="155" cy="100" r="3.5" fill="var(--ink-mid)" stroke="var(--li)" stroke-width="1.5"/>
+            <circle cx="200" cy="88" r="3.5" fill="var(--ink-mid)" stroke="var(--li)" stroke-width="1.5"/>
+            <circle cx="225" cy="78" r="3.5" fill="var(--ink-mid)" stroke="var(--li)" stroke-width="1.5"/>
+            <!-- Current (Jan) highlighted -->
+            <circle cx="250" cy="63" r="5" fill="var(--li)"/>
+            <circle cx="250" cy="63" r="9" fill="none" stroke="var(--li)" stroke-width="1" opacity="0.25"/>
+            <!-- Value callout -->
+            <rect x="200" y="48" width="46" height="14" rx="3" fill="rgba(0,180,216,0.15)" stroke="rgba(0,180,216,0.3)" stroke-width="0.5"/>
+            <text x="223" y="58" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--li)">153,500</text>
+            <!-- X axis labels -->
+            <text x="60" y="148" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">Aug</text>
+            <text x="105" y="148" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">Sep</text>
+            <text x="155" y="148" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">Oct</text>
+            <text x="200" y="148" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">Nov</text>
+            <text x="225" y="148" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--muted)">Dec</text>
+            <text x="250" y="148" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--li)">Jan</text>
+            <text x="340" y="148" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(0,180,216,0.4)">2026→</text>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;">
+            <span>Aug low: ~73,500 CNY</span>
+            <span style="color:var(--li);">+109% recovery to Jan</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="news-timeline-panel">
+        <div class="panel-header">
+          <span class="panel-title">News Release Timeline</span>
+          <span class="panel-sub">Published &amp; planned</span>
+        </div>
+        <div class="news-timeline-body">
+          <div class="news-items">
+            <div class="news-item">
+              <div class="news-dot published"></div>
+              <div class="news-content">
+                <div class="news-date">Oct 9, 2025</div>
+                <div class="news-title">Falchani Cesium Resource Exceeds 400,000 Tonnes</div>
+                <span class="news-tag published">Published</span>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-dot published"></div>
+              <div class="news-content">
+                <div class="news-date">Nov 26, 2025</div>
+                <div class="news-title">Reports Results of AGM</div>
+                <span class="news-tag published">Published</span>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-dot published"></div>
+              <div class="news-content">
+                <div class="news-date">Dec 3, 2025</div>
+                <div class="news-title">Supreme Court Mandates Full Ownership of Claims</div>
+                <span class="news-tag published">Published</span>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-dot published"></div>
+              <div class="news-content">
+                <div class="news-date">Dec 16, 2025</div>
+                <div class="news-title">Intention to Spin Out Macusani Uranium</div>
+                <span class="news-tag published">Published</span>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-dot published"></div>
+              <div class="news-content">
+                <div class="news-date">Jan 28, 2026</div>
+                <div class="news-title">Filed 3- and 6-Month Financials</div>
+                <span class="news-tag published">Published</span>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-dot planned"></div>
+              <div class="news-content">
+                <div class="news-date">Upcoming</div>
+                <div class="news-title planned">Status of MRE and PEA for Macusani</div>
+                <span class="news-tag planned">Planned</span>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-dot planned"></div>
+              <div class="news-content">
+                <div class="news-date">Upcoming</div>
+                <div class="news-title planned">Pilot Plant Update — Falchani</div>
+                <span class="news-tag planned">Planned</span>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-dot planned"></div>
+              <div class="news-content">
+                <div class="news-date">Upcoming</div>
+                <div class="news-title planned">Semi-Detailed Environmental Impact Study — Falchani</div>
+                <span class="news-tag planned">Planned</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PROJECT TIMELINES -->
+  <div class="dash-section" id="projects">
+    <div class="dash-section-header">
+      <span class="dash-section-tag">Project Status &amp; Milestones</span>
+      <div class="dash-section-line"></div>
+    </div>
+    <div class="projects-grid">
+
+      <!-- FALCHANI -->
+      <div class="project-panel">
+        <div class="project-panel-header li">
+          <div class="project-name">Falchani Lithium</div>
+          <div class="project-location">Macusani Plateau, Puno, Peru</div>
+          <span class="project-status-pill pill-advancing">Pilot Plant Active</span>
+        </div>
+        <div class="project-panel-body">
+          <div class="milestone-section-label">Completed milestones</div>
+          <div class="milestones">
+            <div class="milestone-item">
+              <div class="milestone-dot m-done li">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">2024</div>
+                <div class="milestone-text done">PEA completed — $5,093/t LCE operating cost</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done li">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Oct 2025</div>
+                <div class="milestone-text done">Cesium resource exceeds 400,000 tonnes</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done li">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Nov 2025</div>
+                <div class="milestone-text done">ANSTO completes Li loss minimization work</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done li">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Jan 2026</div>
+                <div class="milestone-text done">EIA final approval received from OEFA. Returned to MINEM</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done li">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Jan 2026</div>
+                <div class="milestone-text done">Critical pilot plant components imported to Lima</div>
+              </div>
+            </div>
+          </div>
+          <div class="milestone-divider"></div>
+          <div class="milestone-section-label">Current &amp; upcoming</div>
+          <div class="milestones">
+            <div class="milestone-item">
+              <div class="milestone-dot m-current">→</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Feb 2026</div>
+                <div class="milestone-text current">Remaining equipment arrives ~Feb 20. Pilot plant construction completing in Lima</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-upcoming">○</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Q2 2026</div>
+                <div class="milestone-text upcoming">Pilot plant run (~3 months, ~100 kg/day feed). DRA Pacific to oversee</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-upcoming">○</div>
+              <div class="milestone-content">
+                <div class="milestone-date">2026</div>
+                <div class="milestone-text upcoming">PFS initiation — expected to take 2 to 3 years to complete</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-upcoming">○</div>
+              <div class="milestone-content">
+                <div class="milestone-date">TBD</div>
+                <div class="milestone-text upcoming">Community agreements — Tantamaco negotiation in progress</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MACUSANI URANIUM -->
+      <div class="project-panel">
+        <div class="project-panel-header ur">
+          <div class="project-name">Macusani Uranium</div>
+          <div class="project-location">Macusani Plateau, Puno, Peru</div>
+          <span class="project-status-pill pill-active">Spin-Out Advancing</span>
+        </div>
+        <div class="project-panel-body">
+          <div class="milestone-section-label">Completed milestones</div>
+          <div class="milestones">
+            <div class="milestone-item">
+              <div class="milestone-dot m-done ur">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Oct 2025</div>
+                <div class="milestone-text done">Radiometric survey confirms Colibri potentially larger than drilled. High-grade samples at Tantamaco II</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done ur">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Dec 3, 2025</div>
+                <div class="milestone-text done">Supreme Court decision final and certified — full ownership of claims confirmed</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done ur">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Dec 16, 2025</div>
+                <div class="milestone-text done">Intention to spin out Macusani Uranium announced publicly</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done ur">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Jan 2026</div>
+                <div class="milestone-text done">DIA (limited exploration permit) final approval received from OEFA. Hydrogeological study completed</div>
+              </div>
+            </div>
+          </div>
+          <div class="milestone-divider"></div>
+          <div class="milestone-section-label">Current &amp; upcoming</div>
+          <div class="milestones">
+            <div class="milestone-item">
+              <div class="milestone-dot m-current ur">→</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Now</div>
+                <div class="milestone-text current">Radiometric &amp; geochemical surveys ongoing. Large anomaly being defined between existing resources</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-current ur">→</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Now</div>
+                <div class="milestone-text current">ANSTO continuing yellowcake spec work. Reducing P, V, S, Fe</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-upcoming">○</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Q1–Q2 2026</div>
+                <div class="milestone-text upcoming">MRE and PEA status news release planned</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-upcoming">○</div>
+              <div class="milestone-content">
+                <div class="milestone-date">By Jun 2026</div>
+                <div class="milestone-text upcoming">Spin-out completion targeted — structural separation to create dedicated uranium vehicle</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-upcoming">○</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Post spin-out</div>
+                <div class="milestone-text upcoming">Main drilling and PFS activities budgeted to commence post separation</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TLC NEVADA -->
+      <div class="project-panel">
+        <div class="project-panel-header tlc">
+          <div class="project-name">TLC — Tonopah Lithium</div>
+          <div class="project-location">Tonopah, Nevada, USA</div>
+          <span class="project-status-pill pill-hold">Maintenance &amp; Testing</span>
+        </div>
+        <div class="project-panel-body">
+          <div class="milestone-section-label">Completed milestones</div>
+          <div class="milestones">
+            <div class="milestone-item">
+              <div class="milestone-dot m-done tlc">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Sep 2025</div>
+                <div class="milestone-text done">Ted participated at Governor's 2nd Annual Lithium Summit, Nevada Battery Coalition</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done tlc">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Sep 2025</div>
+                <div class="milestone-text done">Agreement signed with Town of Tonopah to study feasibility of accessing 1,450–2,000 acre feet of water rights</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done tlc">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Nov 2025</div>
+                <div class="milestone-text done">Angel Lino returned to full-time US Operations Manager role</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done tlc">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Jan 2026</div>
+                <div class="milestone-text done">Nevada Battery Coalition briefing with Sen. Cortez Masto's office. Ted represented AMLI</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-done tlc">✓</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Jan 2026</div>
+                <div class="milestone-text done">TLC North (Crescent Dunes) exploration program concluded. Rehabilitation planned</div>
+              </div>
+            </div>
+          </div>
+          <div class="milestone-divider"></div>
+          <div class="milestone-section-label">Current &amp; upcoming</div>
+          <div class="milestones">
+            <div class="milestone-item">
+              <div class="milestone-dot m-current tlc">→</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Now</div>
+                <div class="milestone-text current">Pre-concentration testing of Li-rich clay at TECMMINE Lima. Additional leaching optimization ongoing</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-current tlc">→</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Now</div>
+                <div class="milestone-text current">Desktop studies for optimal geotechnical borehole locations. Round table technical discussion being coordinated</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-upcoming">○</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Apr 2026</div>
+                <div class="milestone-text upcoming">Nye County property taxes due</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-upcoming">○</div>
+              <div class="milestone-content">
+                <div class="milestone-date">Jun 2026</div>
+                <div class="milestone-text upcoming">NV Water Authority diversion applications expire — review required</div>
+              </div>
+            </div>
+            <div class="milestone-item">
+              <div class="milestone-dot m-upcoming">○</div>
+              <div class="milestone-content">
+                <div class="milestone-date">TBD 2026</div>
+                <div class="milestone-text upcoming">PFS initiation — pending broader project strategic review and capital allocation</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REPORT ARCHIVE -->
+  <div class="dash-section" id="archive">
+    <div class="dash-section-header">
+      <span class="dash-section-tag">Report Archive</span>
+      <div class="dash-section-line"></div>
+    </div>
+    <div class="archive-grid">
+      <a class="archive-card" href="reports/amli-january-2026.html">
+        <p class="archive-month">Dec 2025 &amp; Jan 2026</p>
+        <p class="archive-date">Dated February 9, 2026</p>
+        <div class="archive-pills">
+          <span class="a-pill a-pill-li">Falchani</span>
+          <span class="a-pill a-pill-ur">Uranium</span>
+          <span class="a-pill a-pill-fin">Financials</span>
+        </div>
+        <div class="archive-highlight">
+          Cash <strong>$8.4M</strong> &nbsp;·&nbsp; Share $0.85 <strong>+30.8%</strong> &nbsp;·&nbsp; EIA approved &nbsp;·&nbsp; Pilot plant underway
+        </div>
+        <p class="archive-arrow">↗</p>
+      </a>
+      <a class="archive-card" href="reports/amli-november-2025.html">
+        <p class="archive-month">Oct &amp; Nov 2025</p>
+        <p class="archive-date">Dated December 15, 2025</p>
+        <div class="archive-pills">
+          <span class="a-pill a-pill-li">Falchani</span>
+          <span class="a-pill a-pill-ur">Uranium</span>
+          <span class="a-pill a-pill-fin">Financials</span>
+        </div>
+        <div class="archive-highlight">
+          Cash <strong>$4.3M</strong> &nbsp;·&nbsp; Share $0.83 Oct &nbsp;·&nbsp; Supreme Court win &nbsp;·&nbsp; Cesium resource &gt;400K t
+        </div>
+        <p class="archive-arrow">↗</p>
+      </a>
+      <div class="archive-card placeholder">
+        <p class="placeholder-month">Feb &amp; Mar 2026</p>
+        <p class="placeholder-text">Coming soon</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="dash-footer">
+  <div class="footer-left">American <span>Lithium</span> Corp. &nbsp;·&nbsp; Executive Dashboard</div>
+  <div class="footer-right">Prepared by Coastline Communications &nbsp;·&nbsp; Confidential &nbsp;·&nbsp; Updated Feb 2026</div>
+</footer>
+
+</body>
+</html>
